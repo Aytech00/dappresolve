@@ -443,7 +443,7 @@ h2 {
 .stats-card {
   padding: 17px;
   border-radius: var(--radius-5);
-}
+}       
 
 .stats-card .card-title {
   font-size: var(--fs-3);

